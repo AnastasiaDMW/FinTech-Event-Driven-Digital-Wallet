@@ -1,0 +1,41 @@
+services:
+  postgres_transactional_orchestrator:
+    image: postgres:16
+    container_name: postgres_transactional_orchestrator
+    restart: unless-stopped
+    command: >
+      postgres
+      -c wal_level=logical
+      -c max_replication_slots=10
+      -c max_wal_senders=10
+    environment:
+      POSTGRES_USER: postgres_transactional_orchestrator
+      POSTGRES_PASSWORD: password_postgres_transactional_orchestrator
+      POSTGRES_DB: transactional_orchestrator
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_transactional_orchestrator_data:/var/lib/postgresql/data
+      - ./init/transactional_orchestrator:/docker-entrypoint-initdb.d
+  postgres_balance:
+    image: postgres:16
+    container_name: postgres_balance
+    restart: unless-stopped
+    command: >
+      postgres
+      -c wal_level=logical
+      -c max_replication_slots=10
+      -c max_wal_senders=10
+    environment:
+      POSTGRES_USER: postgres_balance
+      POSTGRES_PASSWORD: password_postgres_balance
+      POSTGRES_DB: balance
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_balance_data:/var/lib/postgresql/data
+      - ./init/balance:/docker-entrypoint-initdb.d
+
+volumes:
+  postgres_transactional_orchestrator_data:
+  postgres_balance_data:
