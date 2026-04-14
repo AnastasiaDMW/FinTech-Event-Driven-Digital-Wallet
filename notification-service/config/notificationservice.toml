@@ -1,0 +1,11 @@
+bind_addr=":8082"
+
+log_level="debug"
+log_format="text"
+
+kafka_groupid="notification_service"
+kafka_user_changed_topic="user.changed"
+kafka_send_notify_topic="transaction.send_notification"
+
+[store]
+database_url="host=localhost user=postgres password=1234 dbname=notification_service_dev sslmode=disable"
