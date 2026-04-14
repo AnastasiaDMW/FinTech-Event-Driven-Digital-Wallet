@@ -1,0 +1,10 @@
+bind_addr=":8083"
+
+log_level="debug"
+log_format="text"
+
+kafka_groupid="account_service"
+kafka_user_changed_topic="user.changed"
+
+[store]
+database_url="host=localhost user=postgres password=1234 dbname=account_service_dev sslmode=disable"
