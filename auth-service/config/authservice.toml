@@ -1,0 +1,11 @@
+bind_addr=":8081"
+
+log_level="debug"
+log_format="text"
+
+redis_addr="localhost:6379"
+redis_username="auth"
+redis_password="Au1th$ecretP@sz163"
+
+[store]
+database_url="host=localhost user=postgres password=1234 dbname=auth_service_dev sslmode=disable"
