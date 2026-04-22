@@ -4,14 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.UUID;
 
 @Entity
 @Table(
-        name = "reserved",
+        name = "tbl_reserved",
         indexes = {
-                @Index(name = "idx_reserved_idempotent", columnList = "idempotent"),
-                @Index(name = "idx_reserved_account", columnList = "account_id")
+                @Index(name = "idx_reserved_idempotent_account_id", columnList = "idempotent, account_id")
         }
 )
 @Getter
@@ -30,8 +30,8 @@ public class Reserved {
     private Balance account;
 
     @Column(name = "amount", nullable = false, precision = 19, scale = 2)
-    private BigDecimal amount;
+    private BigInteger amount;
 
-    @Column(name = "idempotent", nullable = false, unique = true, updatable = false)
+    @Column(name = "idempotent", nullable = false, updatable = false)
     private UUID idempotent;
 }

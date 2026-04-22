@@ -2,5 +2,5 @@ package com.example.transactional_orchestrator.dto;
 
 public enum EventType {
 
-    CREATED, SEND
+    CREATED, CHANGED, PROCESSED, RESERVED
 }

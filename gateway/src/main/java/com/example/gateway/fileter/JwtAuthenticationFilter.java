@@ -28,6 +28,14 @@ public class JwtAuthenticationFilter implements WebFilter {
     @Override
     @NonNull
     public Mono<Void> filter(ServerWebExchange exchange, @NonNull WebFilterChain chain) {
+        String path = exchange.getRequest().getURI().getPath();
+        if (path.equals("/auth/api/v1/login") ||
+                path.equals("/auth/api/v1/signup") ||
+                path.equals("/auth/api/v1/refresh") ||
+                path.equals("/auth/api/v1/logout")) {
+
+            return chain.filter(exchange);
+        }
         return exchange.getPrincipal()
                 .flatMap(principal -> {
                     if (!(principal instanceof JwtAuthenticationToken jwt)) {
@@ -46,14 +54,15 @@ public class JwtAuthenticationFilter implements WebFilter {
 
     private String generateInternalToken(Jwt jwt) {
         Instant now = Instant.now();
-
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(gatewayProperty.getIssuer())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(gatewayProperty.getTtl()))
-                .subject(jwt.getSubject())
+                .claim("tokenType", jwt.getClaim("tokenType"))
                 .claim("scope", "internal")
-//TODO                .claim("roles", jwt.getClaim("roles"))
+                .claim("userId", jwt.getClaim("userId"))
+                .claim("email", jwt.getClaim("email"))
+                .claim("role", jwt.getClaim("role"))
                 .build();
         JwsHeader header = JwsHeader.with(() -> "RS256").type("JWT").build();
         return jwtEncoder.encode(

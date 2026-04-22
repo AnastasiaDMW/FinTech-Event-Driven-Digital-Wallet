@@ -29,7 +29,7 @@ func JWTMiddleware(tokenStore redisstore.TokenStore) func(http.Handler) http.Han
 
 			tokenString := parts[1]
 
-			claims, err := ValidateToken(tokenString, "access")
+			claims, err := ValidateToken(publicGatewayKey, tokenString, "access")
 			if err != nil {
 				http.Error(w, "Invalid token", http.StatusUnauthorized)
 				return

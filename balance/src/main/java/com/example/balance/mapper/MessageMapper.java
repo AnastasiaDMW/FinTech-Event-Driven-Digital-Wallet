@@ -1,15 +1,10 @@
 package com.example.balance.mapper;
 
 import com.example.balance.dto.*;
+import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface MessageMapper {
-    @Ma
-    TransactionalReservedMessage toReserved(TransactionalCreatedMessage message);
 
-    @Ma
-    TransactionalChangedMessage toChanged(TransactionalProcessedMessage message);
-
-    @Ma
-    TransactionalFailedMessage toFailed(TransactionalProcessedMessage message);
+    TransactionalFailedMessage toFailed(TransactionalMessage message);
 }

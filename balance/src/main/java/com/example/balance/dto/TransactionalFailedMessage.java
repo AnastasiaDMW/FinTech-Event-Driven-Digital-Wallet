@@ -1,24 +1,23 @@
 package com.example.balance.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.UUID;
-
-import static com.example.balance.dto.EventType.FAILED;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransactionalFailedMessage {
     private Long id;
     private UUID accountFrom;
     private UUID accountTo;
-    private BigDecimal amount;
+    private BigInteger amount;
     private UUID idempotent;
     private TransactionType type;
-    private EventType eventType = FAILED;
+    private EventType eventType;
     private String messageError;
 }

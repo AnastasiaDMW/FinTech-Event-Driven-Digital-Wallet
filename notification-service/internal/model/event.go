@@ -6,7 +6,8 @@ type ChangedUserEvent struct {
 }
 
 type TransactionEvent struct {
-	UserID int     `json:"id"`
+	ID     int     `json:"id"`
+	UserID int     `json:"userId"`
 	Status string  `json:"status"`
 	Amount float64 `json:"amount"`
 }

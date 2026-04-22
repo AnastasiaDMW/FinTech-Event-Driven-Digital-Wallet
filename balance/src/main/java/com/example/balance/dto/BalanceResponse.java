@@ -5,11 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class BalanceResponse {
 
-    private BigDecimal balance;
+    private BigInteger balance;
 }

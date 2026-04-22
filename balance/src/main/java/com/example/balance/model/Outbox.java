@@ -1,5 +1,6 @@
 package com.example.balance.model;
 
+import com.example.balance.converter.CategoryConverter;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,7 +35,7 @@ public class Outbox {
     @Column(name = "event_key", nullable = false)
     private String eventKey;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = CategoryConverter.class)
     @Column(name = "category", nullable = false)
     private Category category;
 

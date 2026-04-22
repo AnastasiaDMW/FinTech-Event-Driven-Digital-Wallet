@@ -15,13 +15,19 @@ import (
 	"github.com/AnastasiaDMW/notification-service/internal/model"
 	"github.com/AnastasiaDMW/notification-service/internal/notifier"
 	"github.com/AnastasiaDMW/notification-service/internal/store"
+	"github.com/joho/godotenv"
 )
 
 const tomlPath = "./config/notificationservice.toml"
 
-var kafkaAddress = []string{"localhost:19092", "localhost:29092", "localhost:39092"}
+var kafkaAddress = []string{"kafka1:9092", "kafka2:9092", "kafka3:9092"}
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	cfg, err := config.LoadConfig(tomlPath)
 	if err != nil {
 		log.Fatal(err)
@@ -36,13 +42,12 @@ func main() {
 
 	notifRepo := store.NewNotificationRepository(db)
 
-	//TODO: Вынести конф данные в .env
 	notif := notifier.New(logg, notifier.SMTPConfig{
-		Host:     "smtp.gmail.com",
-		Port:     "587",
-		Username: "zemerovanastya2017@gmail.com",
-		Password: "zeln yrgm vnzl hcsz",
-		From:     "zemerovanastya2017@gmail.com",
+		Host:     mustEnv("SMTP_HOST"),
+		Port:     mustEnv("SMTP_PORT"),
+		Username: mustEnv("SMTP_USERNAME"),
+		Password: mustEnv("SMTP_PASSWORD"),
+		From:     mustEnv("SMTP_FROM"),
 	})
 
 	h := handler.New(notifRepo, notif, logg)
@@ -92,4 +97,12 @@ func main() {
 	if err := db.DB.Close(); err != nil {
 		logg.Debug("Failed to close db", "error", err)
 	}
+}
+
+func mustEnv(key string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		log.Fatalf("env %s is required", key)
+	}
+	return val
 }

@@ -24,14 +24,29 @@ func NewProducer(address []string) (*Producer, error) {
 }
 
 func (p *Producer) Send(topic, key string, payload []byte) error {
-	return p.producer.Produce(&kafka.Message{
+	deliveryChan := make(chan kafka.Event)
+
+	err := p.producer.Produce(&kafka.Message{
 		TopicPartition: kafka.TopicPartition{
 			Topic:     &topic,
 			Partition: kafka.PartitionAny,
 		},
 		Key:   []byte(key),
 		Value: payload,
-	}, nil)
+	}, deliveryChan)
+
+	if err != nil {
+		return err
+	}
+
+	e := <-deliveryChan
+	msg := e.(*kafka.Message)
+
+	if msg.TopicPartition.Error != nil {
+		return msg.TopicPartition.Error
+	}
+
+	return nil
 }
 
 func (p *Producer) Close() {

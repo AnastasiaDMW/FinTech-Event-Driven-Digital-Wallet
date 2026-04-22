@@ -10,6 +10,8 @@ import (
 	"github.com/AnastasiaDMW/transaction-processor/internal/store"
 )
 
+const failedTopic = "failed"
+
 type Handler struct {
 	repo     *store.TransactionRepository
 	logger   *slog.Logger
@@ -21,6 +23,44 @@ func New(repo *store.TransactionRepository, logger *slog.Logger, producer event.
 		repo:     repo,
 		logger:   logger,
 		Producer: producer,
+	}
+}
+
+func (h *Handler) HandleFailed(e dto.Failed, topic string) error {
+	if err := e.Validate(); err != nil {
+		h.logger.Debug("invalid failed message", "error", err)
+		return err
+	}
+
+	exist, err := h.repo.CheckIdempotent(e.Idempotent)
+	if err != nil {
+		return err
+	}
+	if exist {
+		return nil
+	}
+
+	deleted, err := h.repo.DeleteLedger(e.Idempotent)
+	if err != nil {
+		return err
+	}
+
+	h.logger.Info("ledger rollback executed",
+		"idempotent", e.Idempotent,
+		"deleted", deleted,
+	)
+
+	return nil
+}
+
+func (h *Handler) ProcessTransaction(e dto.Transaction, topic string) {
+	err := h.HandleTransaction(e, topic)
+	if err != nil {
+		h.logger.Error("transaction failed", "error", err)
+
+		if sendErr := h.sendFailed(e, err); sendErr != nil {
+			h.logger.Error("failed to send FAILED event", "error", sendErr)
+		}
 	}
 }
 
@@ -37,16 +77,18 @@ func (h *Handler) HandleTransaction(e dto.Transaction, topic string) error {
 
 	exist, err := h.repo.CheckIdempotent(e.Idempotent)
 	if err != nil {
+		h.logger.Debug("Error check idempotent", "error", err.Error())
 		return err
 	}
 	if exist {
+		h.logger.Debug("Error idempotent exist")
 		return nil
 	}
 
 	hasTo := e.AccountTo != ""
 	hasFrom := e.AccountFrom != ""
 
-	add := func(account string, amount string) (int64, error) {
+	add := func(account string, amount int64) (int64, error) {
 		return h.repo.AddLedger(dto.Ledger{
 			AccountNumber: account,
 			Amount:        amount,
@@ -62,22 +104,20 @@ func (h *Handler) HandleTransaction(e dto.Transaction, topic string) error {
 		}
 
 		h.logger.Debug("Deposit ledger created", "id", id)
-		return nil
 	}
 
 	if hasFrom && !hasTo {
-		id, err := add(e.AccountFrom, "-"+e.Amount)
+		id, err := add(e.AccountFrom, -e.Amount)
 		if err != nil {
 			h.logger.Debug("Failed withdraw ledger", "error", err)
 			return err
 		}
 
 		h.logger.Debug("Withdraw ledger created", "id", id)
-		return nil
 	}
 
 	if hasFrom && hasTo {
-		fromID, err := add(e.AccountFrom, "-"+e.Amount)
+		fromID, err := add(e.AccountFrom, -e.Amount)
 		if err != nil {
 			h.logger.Debug("Failed transfer (from)", "error", err)
 			return err
@@ -94,9 +134,9 @@ func (h *Handler) HandleTransaction(e dto.Transaction, topic string) error {
 			"to_id", toID,
 		)
 
-		return nil
 	}
 
+	h.logger.Debug("Before send message in topic", "topic", topic)
 	err = h.sendMessage(e, topic)
 	if err != nil {
 		return err
@@ -124,4 +164,27 @@ func (h *Handler) sendMessage(e dto.Transaction, topic string) error {
 	h.logger.Debug("Send messages")
 
 	return nil
+}
+
+func (h *Handler) sendFailed(e dto.Transaction, err error) error {
+	msg := dto.Failed{
+		Id:           e.Id,
+		AccountFrom:  e.AccountFrom,
+		AccountTo:    e.AccountTo,
+		Amount:       e.Amount,
+		Idempotent:   e.Idempotent,
+		Type:         e.Type,
+		MessageError: err.Error(),
+	}
+
+	payload, marshalErr := json.Marshal(msg)
+	if marshalErr != nil {
+		return marshalErr
+	}
+
+	return h.Producer.Send(
+		failedTopic,
+		e.Idempotent,
+		payload,
+	)
 }

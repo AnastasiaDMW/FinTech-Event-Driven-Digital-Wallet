@@ -46,6 +46,7 @@ func (h *Handler) Valid(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		resp.IsValidAccountFrom = isValidFrom
+		resp.IsValidAccountTo = true
 	}
 
 	if hasTo && !hasFrom {
@@ -55,6 +56,7 @@ func (h *Handler) Valid(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		resp.IsValidAccountTo = isValidTo
+		resp.IsValidAccountFrom = true
 	}
 
 	if hasTo && hasFrom {

@@ -1,5 +1,6 @@
 package com.example.balance.service.impl;
 
+import com.example.balance.exception.OperationNotSupportedException;
 import com.example.balance.model.Reserved;
 import com.example.balance.repository.ReservedRepository;
 import com.example.balance.service.ReservedService;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +20,7 @@ public class ReservedServiceImpl implements ReservedService {
     private final ReservedRepository repo;
 
     @Override
-    public boolean isIdempotentRequest(UUID idempotent) {
+    public boolean isNotIdempotentRequest(UUID idempotent) {
         return repo.existsByIdempotent(idempotent);
     }
 

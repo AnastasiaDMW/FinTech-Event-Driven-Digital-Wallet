@@ -35,7 +35,7 @@ func (h *Handler) Refresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	claims, err := auth.ValidateToken(req.RefreshToken, "refresh")
+	claims, err := auth.ValidateToken(publicKey, req.RefreshToken, "refresh")
 	if err != nil {
 		http.Error(w, "Invalid refresh token", http.StatusUnauthorized)
 		return

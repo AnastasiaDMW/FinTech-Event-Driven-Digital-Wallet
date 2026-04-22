@@ -6,4 +6,5 @@ var (
 	ErrInvalidToken     = errors.New("Invalid token")
 	ErrInvalidTokenType = errors.New("Invalid token type")
 	ErrInvalidAlg       = errors.New("Invalid alg type in token header")
+	ErrMissingKeys      = errors.New("Missing keys")
 )

@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.UUID;
 
 import static com.example.transactional_orchestrator.model.Status.CREATED;
 import static jakarta.persistence.GenerationType.IDENTITY;
-import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
 @Getter
@@ -30,14 +30,14 @@ public class Transaction {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "from_account_id", nullable = false)
-    private UUID fromAccountId;
+    @Column(name = "account_from")
+    private UUID accountFrom;
 
-    @Column(name = "to_account_id", nullable = false)
-    private UUID toAccountId;
+    @Column(name = "account_to")
+    private UUID accountTo;
 
     @Column(name = "amount", nullable = false, precision = 19, scale = 2)
-    private BigDecimal amount;
+    private BigInteger amount;
 
     @Column(name = "idempotent", unique = true, nullable = false)
     private UUID idempotent;
@@ -61,6 +61,9 @@ public class Transaction {
 
     @Column(name = "owner_id", nullable = false, updatable = false)
     private Long ownerId;
+
+    @Column(name = "message_error")
+    private String messageError;
 
     @PrePersist
     public void prePersist() {

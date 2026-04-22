@@ -7,16 +7,17 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func LoadPublicKey(path string) *rsa.PublicKey {
-	keyData, err := os.ReadFile(path)
-	if err != nil {
-		panic(err)
+func LoadPublicKey() (*rsa.PublicKey, error) {
+	pub := os.Getenv("PUBLIC_KEY")
+
+	if pub == "" {
+		return nil, ErrMissingKeys
 	}
 
-	publicKey, err := jwt.ParseRSAPublicKeyFromPEM(keyData)
+	keyPublic, err := jwt.ParseRSAPublicKeyFromPEM([]byte(pub))
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return publicKey
+	return keyPublic, nil
 }

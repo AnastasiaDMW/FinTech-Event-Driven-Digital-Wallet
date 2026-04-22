@@ -1,7 +1,6 @@
 package com.example.balance.api;
 
 import com.example.balance.dto.BalanceResponse;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 

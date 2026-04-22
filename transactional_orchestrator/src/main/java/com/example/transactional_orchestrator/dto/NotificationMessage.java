@@ -13,5 +13,4 @@ public class NotificationMessage {
     private Long amount;
     private String status;
     private Long userId;
-    private EventType eventType;
 }

@@ -1,0 +1,16 @@
+services:
+  redis:
+    image: redis:8.0
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - microservice-redis-data:/data
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    restart: unless-stopped
+    mem_limit: 64m
+    cpus: 0.01
+
+volumes:
+  microservice-redis-data:

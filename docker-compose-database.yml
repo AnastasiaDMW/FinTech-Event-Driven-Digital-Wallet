@@ -13,10 +13,13 @@ services:
       POSTGRES_PASSWORD: password_postgres_transactional_orchestrator
       POSTGRES_DB: transactional_orchestrator
     ports:
-      - "5432:5432"
+      - "5438:5432"
     volumes:
       - postgres_transactional_orchestrator_data:/var/lib/postgresql/data
       - ./init/transactional_orchestrator:/docker-entrypoint-initdb.d
+    mem_limit: 256m
+    cpus: 1.0
+
   postgres_balance:
     image: postgres:16
     container_name: postgres_balance
@@ -30,12 +33,82 @@ services:
       POSTGRES_USER: postgres_balance
       POSTGRES_PASSWORD: password_postgres_balance
       POSTGRES_DB: balance
+    mem_limit: 256m
+    cpus: 1.0
     ports:
       - "5433:5432"
     volumes:
       - postgres_balance_data:/var/lib/postgresql/data
       - ./init/balance:/docker-entrypoint-initdb.d
 
+  postgres_auth_service:
+    image: postgres:16
+    container_name: postgres_auth_service
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: auth_service_dev
+    mem_limit: 256m
+    cpus: 1.0
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_auth_service_data:/var/lib/postgresql/data
+      - ./init/auth-service:/docker-entrypoint-initdb.d
+
+  postgres_account_service:
+    image: postgres:16
+    container_name: postgres_account_service
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: account_service_dev
+    mem_limit: 256m
+    cpus: 1.0
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_account_service_data:/var/lib/postgresql/data
+      - ./init/account-service:/docker-entrypoint-initdb.d
+
+  postgres_notification_service:
+    image: postgres:16
+    container_name: postgres_notification_service
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: notification_service_dev
+    mem_limit: 256m
+    cpus: 1.0
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres_notification_service_data:/var/lib/postgresql/data
+      - ./init/notification-service:/docker-entrypoint-initdb.d
+
+  postgres_transaction_processor:
+    image: postgres:16
+    container_name: postgres_transaction_processor
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: transaction_processor_dev
+    mem_limit: 256m
+    cpus: 1.0
+    ports:
+      - "5437:5432"
+    volumes:
+      - postgres_transaction_processor_data:/var/lib/postgresql/data
+      - ./init/transaction-processor:/docker-entrypoint-initdb.d
+
 volumes:
   postgres_transactional_orchestrator_data:
   postgres_balance_data:
+  postgres_auth_service_data:
+  postgres_account_service_data:
+  postgres_notification_service_data:
+  postgres_transaction_processor_data:

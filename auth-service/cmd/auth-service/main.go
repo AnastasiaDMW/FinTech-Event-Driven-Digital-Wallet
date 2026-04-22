@@ -16,13 +16,18 @@ import (
 	"github.com/AnastasiaDMW/auth-service/internal/server"
 	"github.com/AnastasiaDMW/auth-service/internal/store/postgresstore"
 	"github.com/AnastasiaDMW/auth-service/internal/store/redisstore"
+	"github.com/joho/godotenv"
 )
 
 const tomlPath = "./config/authservice.toml"
 
-var kafkaAddress = []string{"localhost:19092", "localhost:29092", "localhost:39092"}
+var kafkaAddress = []string{"kafka1:9092", "kafka2:9092", "kafka3:9092"}
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
+
 	cfg, err := server.LoadConfig(tomlPath)
 	if err != nil {
 		log.Fatal(err)
@@ -31,6 +36,11 @@ func main() {
 	logg := logger.New(cfg.LogLevel, cfg.LogFormat)
 
 	err = auth.InitKeys()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = handler.InitGatewayKey()
 	if err != nil {
 		log.Fatal(err)
 	}

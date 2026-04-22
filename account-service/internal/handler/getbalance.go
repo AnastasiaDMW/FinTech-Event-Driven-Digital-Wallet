@@ -6,15 +6,17 @@ import (
 	"time"
 
 	"github.com/AnastasiaDMW/account-service/internal/auth"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 )
 
 const (
-	urlBalanceService = "http://localhost:8085/api/v1/balance/"
+	urlBalanceService = "http://balance:8080/api/v1/balance/"
 	waitTimeout       = 4
 )
 
 func (h *Handler) GetBalance(w http.ResponseWriter, r *http.Request) {
+	h.logger.Debug("FULL PATH", "path", r.URL.Path)
+
 	userId, ok := r.Context().Value(auth.UserIdKey).(int64)
 	if !ok {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -22,6 +24,7 @@ func (h *Handler) GetBalance(w http.ResponseWriter, r *http.Request) {
 	}
 
 	accountNumber := chi.URLParam(r, "accountNumber")
+	h.logger.Debug("accountNumber param", "value", accountNumber)
 	if accountNumber == "" {
 		http.Error(w, "AccountNumber is required", http.StatusBadRequest)
 		return

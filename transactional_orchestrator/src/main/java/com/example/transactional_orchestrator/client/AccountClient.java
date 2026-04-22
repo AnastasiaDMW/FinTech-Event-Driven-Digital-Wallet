@@ -1,14 +1,14 @@
 package com.example.transactional_orchestrator.client;
 
 import com.example.transactional_orchestrator.dto.AccountRequest;
+import com.example.transactional_orchestrator.dto.AccountResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-
-import java.util.UUID;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = "accountService", url = "${account_service.url}")
 public interface AccountClient {
 
-    default boolean isValidAccount(UUID account){
-        return true;//todo
-    }
+    @PostMapping("/api/v1/accounts/valid")
+    AccountResponse isValidAccount(@RequestBody AccountRequest request);
 }

@@ -20,6 +20,6 @@ public class BalanceController implements BalanceApi {
 
     @Override
     public BalanceResponse getBalance(UUID request) {
-        return service.getBalance(request);
+        return service.getBalanceResponce(request);
     }
 }

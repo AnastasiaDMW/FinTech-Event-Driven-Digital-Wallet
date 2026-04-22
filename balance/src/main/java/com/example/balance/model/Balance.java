@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.UUID;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -27,5 +28,5 @@ public class Balance {
 
     @Column(name = "balance", nullable = false, precision = 19, scale = 2)
     @Builder.Default
-    private BigDecimal balance = BigDecimal.ZERO;
+    private BigInteger balance = BigInteger.ZERO;
 }

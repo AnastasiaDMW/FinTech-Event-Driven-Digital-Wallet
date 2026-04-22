@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-auth-config
+  namespace: microservices
+data:
+  postgresql.conf: |
+    listen_addresses = '*'
+    max_connections = 100
+    shared_buffers = 128MB
+  
+  init.sql: |
+    CREATE TABLE IF NOT EXISTS users (
+        id bigserial not null primary key,
+        email varchar not null unique,
+        encrypted_password varchar not null,
+        role VARCHAR NOT NULL DEFAULT 'user',
+        email_verified boolean DEFAULT FALSE,
+        created_at timestamp not null DEFAULT NOW(),
+        updated_at timestamp not null DEFAULT NOW()
+    );

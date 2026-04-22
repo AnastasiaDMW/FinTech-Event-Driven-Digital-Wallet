@@ -17,13 +17,17 @@ import (
 	"github.com/AnastasiaDMW/account-service/internal/logger"
 	"github.com/AnastasiaDMW/account-service/internal/server"
 	"github.com/AnastasiaDMW/account-service/internal/store"
+	"github.com/joho/godotenv"
 )
 
 const tomlPath = "./config/accountservice.toml"
 
-var kafkaAddress = []string{"localhost:19092", "localhost:29092", "localhost:39092"}
+var kafkaAddress = []string{"kafka1:9092", "kafka2:9092", "kafka3:9092"}
 
 func main() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(".env not found, using system env")
+	}
 
 	cfg, err := server.LoadConfig(tomlPath)
 	if err != nil {
@@ -34,7 +38,10 @@ func main() {
 
 	logg.Debug("Starting service")
 
-	publicKey := auth.LoadPublicKey("public_key.pem")
+	publicKey, err := auth.LoadPublicKey()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	authMw := &auth.AuthMiddleware{
 		PublicKey: publicKey,

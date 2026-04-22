@@ -1,0 +1,106 @@
+services:
+  transactional-orchestrator-a:
+    container_name: transactional-orchestrator-a
+    build: ./transactional_orchestrator
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - postgres_transactional_orchestrator
+    cpus: 0.5
+    mem_limit: 512m
+    env_file:
+      - ./env/.transactional_orchestrator_env
+
+  transactional-orchestrator-b:
+    container_name: transactional-orchestrator-b
+    build: ./transactional_orchestrator
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - postgres_transactional_orchestrator
+    cpus: 0.5
+    mem_limit: 512m
+    env_file:
+      - ./env/.transactional_orchestrator_env
+
+  eureka-server:
+    build: ./eurika
+    container_name: eureka-server
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    cpus: 0.5
+    mem_limit: 512m
+
+  balance:
+    container_name: balance
+    build: ./balance
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - postgres_balance
+    cpus: 0.5
+    mem_limit: 512m
+    env_file:
+      - ./env/.balance_env
+
+  gateway:
+    container_name: gateway
+    build: ./gateway
+    ports:
+      - "8080:8080"
+    cpus: 0.5
+    mem_limit: 512m
+    depends_on:
+      - redis
+    env_file:
+      - ./env/.gateway_env
+
+  account-service:
+    container_name: account-service
+    build: ./account-service
+    cpus: 0.5
+    mem_limit: 512m
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - postgres_account_service
+
+  auth-service:
+    container_name: auth-service
+    build: ./auth-service
+    cpus: 0.5
+    mem_limit: 512m
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - redis
+      - postgres_auth_service
+
+  notification-service:
+    container_name: notification-service
+    build: ./notification-service
+    cpus: 0.5
+    mem_limit: 512m
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - postgres_notification_service
+
+  transaction-processor:
+    container_name: transaction-processor
+    build: ./transaction-processor
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - postgres_transaction_processor
+    cpus: 0.5
+    mem_limit: 512m
+    env_file:
+      - ./env/.balance_env

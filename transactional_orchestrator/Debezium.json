@@ -14,21 +14,27 @@
     "table.include.list": "public.tbl_outbox",
     "plugin.name": "pgoutput",
     "topic.prefix": "topic",
-    "transforms": "outbox,headerize",
+    "transforms": "outbox, unwrap",
     "key.converter": "org.apache.kafka.connect.storage.StringConverter",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
     "value.converter.schemas.enable": "false",
     "transforms.outbox.type": "io.debezium.transforms.outbox.EventRouter",
+
     "transforms.outbox.table.field.event.id": "id",
     "transforms.outbox.table.field.event.key": "event_key",
     "transforms.outbox.table.field.event.type": "event_type",
     "transforms.outbox.table.field.event.payload": "payload",
+
     "transforms.outbox.route.by.field": "category",
     "transforms.outbox.route.topic.replacement": "${routedByValue}",
+
+    "transforms.outbox.table.expand.json.payload": "true",
+    "transforms.outbox.value.field": "payload",
+
     "transforms.outbox.remove.table.fields": "true",
-    "transforms.headerize.type": "org.apache.kafka.connect.transforms.HeaderFrom$Value",
-    "transforms.headerize.headers": "event_type",
-    "transforms.headerize.fields": "event_type",
-    "transforms.headerize.operation": "move"
+
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "true",
+    "transforms.unwrap.delete.handling.mode": "rewrite"
   }
 }

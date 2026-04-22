@@ -12,6 +12,7 @@ type Config struct {
 	LogFormat             string      `toml:"log_format"`
 	KafkaGroupId          string      `toml:"kafka_groupid"`
 	KafkaTransactionTopic string      `toml:"kafka_transaction_topic"`
+	KafkaFailedTopic      string      `toml:"kafka_failed_topic"`
 	Store                 StoreConfig `toml:"store"`
 }
 

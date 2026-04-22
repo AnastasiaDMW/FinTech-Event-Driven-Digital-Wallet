@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.UUID;
 
 @Service
@@ -21,21 +22,35 @@ public class BalanceServiceImpl implements BalanceService {
 
     @Override
     @Transactional
-    public Balance withdraw(UUID fromAccountId, BigDecimal amount) {
+    public Balance withdraw(UUID fromAccountId, BigInteger amount) {
         return reserve(fromAccountId, amount.negate());
     }
 
     @Override
     @Transactional
-    public Balance deposit(UUID fromAccountId, BigDecimal amount) {
+    public Balance deposit(UUID fromAccountId, BigInteger amount) {
         return reserve(fromAccountId, amount);
     }
 
     @Override
     @Transactional
-    public BalanceResponse getBalance(UUID account) {
+    public BalanceResponse getBalanceResponce(UUID account) {
         Balance balance = getByAccount(account);
         return new BalanceResponse(balance.getBalance());
+    }
+
+    @Override
+    public void checkBalance(UUID account, BigInteger amount) {
+        Balance balance = getByAccount(account);
+        if (balance.getBalance().add(amount).compareTo(BigInteger.ZERO) < 0) {
+            throw new InsufficientFundsException(balance.getAccount());
+        }
+    }
+
+    @Override
+    @Transactional
+    public Balance getBalance(UUID account) {
+        return getByAccount(account);
     }
 
     private Balance getByAccount(UUID account) {
@@ -50,16 +65,9 @@ public class BalanceServiceImpl implements BalanceService {
         );
     }
 
-    private Balance reserve(UUID account, BigDecimal amount) {
+    private Balance reserve(UUID account, BigInteger amount) {
         Balance balance = getByAccount(account);
-        balance.setBalance(balance.getBalance().subtract(amount));
-        throwExceptionIfInsufficientFunds(balance);
+        balance.setBalance(balance.getBalance().add(amount));
         return repo.save(balance);
-    }
-
-    private void throwExceptionIfInsufficientFunds(Balance balance) {
-        if (balance.getBalance().compareTo(BigDecimal.ZERO) < 0) {
-            throw new InsufficientFundsException(balance.getAccount());
-        }
     }
 }

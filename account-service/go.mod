@@ -1,6 +1,6 @@
 module github.com/AnastasiaDMW/account-service
 
-go 1.25.0
+go 1.26
 
 require (
 	github.com/BurntSushi/toml v1.6.0
@@ -13,4 +13,7 @@ require (
 	github.com/lib/pq v1.12.3
 )
 
-require github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
+require (
+	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
+	github.com/joho/godotenv v1.5.1
+)

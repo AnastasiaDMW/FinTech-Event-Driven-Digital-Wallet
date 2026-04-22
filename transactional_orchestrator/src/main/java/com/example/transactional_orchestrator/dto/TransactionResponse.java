@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.UUID;
 
 @Getter
@@ -15,9 +16,9 @@ import java.util.UUID;
 public class TransactionResponse {
 
     private Long id;
-    private UUID fromAccountId;
-    private UUID toAccountId;
-    private BigDecimal amount;
+    private UUID accountFrom;
+    private UUID accountTo;
+    private BigInteger amount;
     private UUID idempotent;
     private TransactionType type;
     private Status status;

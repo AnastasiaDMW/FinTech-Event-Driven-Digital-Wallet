@@ -46,3 +46,22 @@ func (r *TransactionRepository) CheckIdempotent(idempotent string) (bool, error)
 
 	return exists, nil
 }
+
+func (r *TransactionRepository) DeleteLedger(idempotent string) (bool, error) {
+	result, err := r.store.DB.Exec(`
+		DELETE FROM ledgers
+		WHERE idempotent = $1
+	`, idempotent)
+	if err != nil {
+		r.logger.Error("failed to delete ledger", "error", err)
+		return false, err
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		r.logger.Error("failed to get affected rows", "error", err)
+		return false, err
+	}
+
+	return rows > 0, nil
+}

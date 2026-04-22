@@ -1,6 +1,6 @@
 package com.example.transactional_orchestrator.dto;
 
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,8 +8,8 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class AccountRequest {
-    private UUID fromAccountId;
-    private UUID toAccountId;
-
+    private UUID accountFrom;
+    private UUID accountTo;
 }

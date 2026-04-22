@@ -28,7 +28,7 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := auth.ValidateToken(req.RefreshToken, "refresh")
+	_, err := auth.ValidateToken(publicKey, req.RefreshToken, "refresh")
 	if err != nil {
 		http.Error(w, "Invalid refresh token", http.StatusUnauthorized)
 		return

@@ -10,6 +10,30 @@ import (
 
 var privateKey *rsa.PrivateKey
 var publicKey *rsa.PublicKey
+var publicGatewayKey *rsa.PublicKey
+
+func InitKeys() error {
+	priv := os.Getenv("PRIVATE_KEY")
+	pubG := os.Getenv("PUBLIC_GATEWAY_KEY")
+
+	if priv == "" || pubG == "" {
+		return ErrMissingKeys
+	}
+
+	keyPrivate, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(priv))
+	if err != nil {
+		return err
+	}
+
+	keyGatePub, err := jwt.ParseRSAPublicKeyFromPEM([]byte(pubG))
+	if err != nil {
+		return err
+	}
+
+	privateKey = keyPrivate
+	publicGatewayKey = keyGatePub
+	return nil
+}
 
 type Claims struct {
 	UserID    string `json:"userId"`
@@ -41,7 +65,7 @@ func GenerateTokenPair(userID, email, role string) (*TokenPair, error) {
 	}, nil
 }
 
-func ValidateToken(tokenString, expectedType string) (*Claims, error) {
+func ValidateToken(publicKey *rsa.PublicKey, tokenString, expectedType string) (*Claims, error) {
 	claims := &Claims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
@@ -67,30 +91,6 @@ func ValidateToken(tokenString, expectedType string) (*Claims, error) {
 	}
 
 	return claims, nil
-}
-
-func InitKeys() error {
-	keyPrivData, err := os.ReadFile("private.pem")
-	if err != nil {
-		return err
-	}
-	keyPubData, err := os.ReadFile("public.pem")
-	if err != nil {
-		return err
-	}
-
-	keyPrivate, err := jwt.ParseRSAPrivateKeyFromPEM(keyPrivData)
-	if err != nil {
-		return err
-	}
-	keyPublic, err := jwt.ParseRSAPublicKeyFromPEM(keyPubData)
-	if err != nil {
-		return err
-	}
-
-	privateKey = keyPrivate
-	publicKey = keyPublic
-	return nil
 }
 
 func generateToken(userID, email, role, tokenType string, ttl time.Duration) (string, error) {

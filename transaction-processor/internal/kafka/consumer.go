@@ -76,6 +76,10 @@ func (c *Consumer) Start(
 	}
 }
 
+func (c *Consumer) SubscribeTopics(topics []string) error {
+	return c.consumer.SubscribeTopics(topics, nil)
+}
+
 func (c *Consumer) Close() error {
 	close(c.stopCh)
 	return c.consumer.Close()

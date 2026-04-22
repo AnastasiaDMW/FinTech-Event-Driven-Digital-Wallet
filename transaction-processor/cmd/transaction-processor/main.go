@@ -18,7 +18,7 @@ import (
 
 const tomlPath = "./config/transactionprocessor.toml"
 
-var kafkaAddress = []string{"localhost:19092", "localhost:29092", "localhost:39092"}
+var kafkaAddress = []string{"kafka1:9092", "kafka2:9092", "kafka3:9092"}
 
 func main() {
 	cfg, err := config.LoadConfig(tomlPath)
@@ -56,21 +56,40 @@ func main() {
 		log.Fatal(err)
 	}
 
+	consumer.SubscribeTopics([]string{
+		cfg.KafkaTransactionTopic,
+		cfg.KafkaFailedTopic,
+	})
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	go func() {
 		consumer.Start(ctx, func(topic string, raw []byte) error {
-			var e dto.Transaction
 
-			if err := json.Unmarshal(raw, &e); err != nil {
-				logg.Debug("Invalid kafka message", "error", err)
-				return err
-			}
+			switch topic {
 
-			if err := h.HandleTransaction(e, cfg.KafkaTransactionTopic); err != nil {
-				logg.Debug("Failed to handle transaction", "error", err)
-				return err
+			case cfg.KafkaTransactionTopic:
+				var e dto.Transaction
+				if err := json.Unmarshal(raw, &e); err != nil {
+					logg.Error("invalid transaction message", "error", err)
+					return nil
+				}
+
+				if err := h.HandleTransaction(e, topic); err != nil {
+					logg.Error("failed transaction", "error", err)
+				}
+
+			case cfg.KafkaFailedTopic:
+				var e dto.Failed
+				if err := json.Unmarshal(raw, &e); err != nil {
+					logg.Error("invalid failed message", "error", err)
+					return nil
+				}
+
+				if err := h.HandleFailed(e, topic); err != nil {
+					logg.Error("failed failed-event processing", "error", err)
+				}
 			}
 
 			return nil

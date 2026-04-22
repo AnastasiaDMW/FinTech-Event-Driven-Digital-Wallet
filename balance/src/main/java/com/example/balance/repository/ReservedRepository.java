@@ -11,6 +11,7 @@ import java.util.UUID;
 public interface ReservedRepository extends JpaRepository<Reserved, Long> {
 
     boolean existsByIdempotent(UUID idempotent);
+
     void removeByIdempotent(UUID idempotent);
 
     List<Reserved> findByIdempotent(UUID idempotent);
