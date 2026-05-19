@@ -1,5 +1,6 @@
 package com.example.gateway.config;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

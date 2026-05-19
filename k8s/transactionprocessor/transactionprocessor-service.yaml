@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: transactionprocessor-service
+  namespace: microservices
+spec:
+  selector:
+    app: transactionprocessor-service
+  ports:
+  - port: 8080
+    targetPort: 8085

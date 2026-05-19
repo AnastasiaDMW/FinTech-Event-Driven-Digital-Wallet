@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+        - name: gateway
+          image: gateway:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secret
+                  key: REDIS_HOST
+
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secret
+                  key: REDIS_PORT
+
+            - name: REDIS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secret
+                  key: REDIS_USERNAME
+
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secret
+                  key: REDIS_PASSWORD
+
+            - name: URI_TRANSACTIONAL
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secret
+                  key: URI_TRANSACTIONAL
+
+            - name: URI_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secret
+                  key: URI_ACCOUNT
+
+            - name: URI_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secret
+                  key: URI_AUTH
+
+            - name: AUTH_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secret
+                  key: AUTH_PUBLIC_KEY
+
+            - name: GATEWAY_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secret
+                  key: GATEWAY_PRIVATE_KEY
+
+            - name: GATEWAY_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gateway-secret
+                  key: GATEWAY_PUBLIC_KEY
+
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"

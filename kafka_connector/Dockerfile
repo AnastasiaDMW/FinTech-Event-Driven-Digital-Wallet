@@ -10,4 +10,4 @@ COPY plugins /usr/share/confluent-hub-components
 
 RUN chmod +x /init.sh
 
-CMD ["/bin/bash", "-c", "/etc/confluent/docker/run & sleep 20 && /init.sh && wait"]
+CMD ["/bin/bash", "/init.sh"]

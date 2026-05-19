@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kafka-connect-env
+  namespace: microservices
+data:
+  DEBEZIUM_USER: debezium
+  DEBEZIUM_PASSWORD: dbz
+
+  BALANCE_NAME: balance-connector
+  BALANCE_DBNAME: balance
+  BALANCE_HOSTNAME: postgres-balance-service
+  BALANCE_SERVER_NAME: balance
+
+  TRANSACTIONAL_ORCHESTRATOR_NAME: transactional-orchestrator-connector
+  TRANSACTIONAL_ORCHESTRATOR_DBNAME: transactional_orchestrator
+  TRANSACTIONAL_ORCHESTRATOR_HOSTNAME: postgres-transactionorchestrator-service
+  TRANSACTIONAL_ORCHESTRATOR_SERVER_NAME: transactional-orchestrator
+
+  MONGO_CONNECTION_URI: mongodb://kafka_writer:secure_password@mongodb-service:27017/logs_db?authSource=admin

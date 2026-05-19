@@ -5,31 +5,10 @@ metadata:
   namespace: microservices
 data:
   redis.conf: |
-    # Основные настройки
     appendonly yes
     save 60 1
-    
-    # Настройки памяти
-    maxmemory 64mb
-    maxmemory-policy allkeys-lru
-    
-    # Безопасность
-    protected-mode yes
-    
-    # Производительность
-    tcp-backlog 511
-    timeout 0
-    tcp-keepalive 300
-    
-    # Логирование
-    loglevel notice
-    
-    # Количество баз данных
-    databases 16
-    
-    # Настройки репликации (для будущего масштабирования)
-    replica-read-only yes
-    
-    # Медленные логи
-    slowlog-log-slower-than 10000
-    slowlog-max-len 128
+
+    user gateway on >R4nd0mT0rngP@ssw0rd!XyZ ~*request_rate_limiter* +@all
+    user auth on >Au1th$ecretP@sz163 ~auth:* ~user:* +@all
+
+    user default off

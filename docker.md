@@ -13,4 +13,4 @@ curl -X POST http://localhost:8083/connectors -H "Content-Type: application/json
 curl -X POST http://localhost:8083/connectors -H "Content-Type: application/json"  -d @mongo-sink-connector.json
 curl -X POST http://localhost:8083/connectors -H "Content-Type: application/json"  -d @dsds.json
 
-docker-compose -f docker-compose-redis.yml -f docker-compose-database.yml -f docker-compose-mongo.yml -f docker-compose-kafka.yml -f docker-compose-service.yml   up -d
+docker-compose -f docker-compose-observability.yml -f docker-compose-redis.yml -f docker-compose-database.yml -f docker-compose-mongo.yml -f docker-compose-kafka.yml -f docker-compose-service.yml   up -d

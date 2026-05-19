@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: balance-service
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: balance-service
+  template:
+    metadata:
+      labels:
+        app: balance-service
+    spec:
+      containers:
+      - name: balance-service
+        image: balance-service:latest
+        imagePullPolicy: Never
+
+        ports:
+        - containerPort: 8080
+
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: balance-secret
+              key: DB_HOST
+
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: balance-secret
+              key: DB_USERNAME
+
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: balance-secret
+              key: DB_PASSWORD
+
+        - name: BOOTSTRAP_SERVERS
+          valueFrom:
+            secretKeyRef:
+              name: balance-secret
+              key: BOOTSTRAP_SERVERS
+
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"

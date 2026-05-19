@@ -20,19 +20,43 @@ account_service:
   url: ${ACCOUNT_URI}
 gateway:
   public-key: ${GATEWAY_PUBLIC_KEY}
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: transactional-orchestrator
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0   # 100% (для dev)
+  otlp:
+    tracing:
+      endpoint: ${URI_JAEGER}
 kafka-consumer:
   bootstrap-servers: ${BOOTSTRAP_SERVERS}
   group-id: transactional-orchestrator
   auto-offset-reset: earliest
   trusted-packages: com.example.transactional_orchestrator.dto
 
-eureka:
-  client:
-    service-url:
-      defaultZone: ${URI_EUREKA}
-    register-with-eureka: true
-    fetch-registry: true
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: ${URI_EUREKA}
+#    register-with-eureka: true
+#    fetch-registry: true
+#
+#  instance:
+#    instance-id: ${spring.application.name}:${HOSTNAME}
 
-  instance:
-    instance-id: ${spring.application.name}:${HOSTNAME}
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level traceId=%X{traceId} spanId=%X{spanId} %logger - %msg%n"

@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: account-migration
+  namespace: microservices
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+
+      containers:
+      - name: migrator
+        image: postgres:16-alpine
+
+        env:
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-account-secret
+              key: POSTGRES_PASSWORD
+
+        command:
+        - sh
+        - -c
+        - |
+          echo "Waiting for Postgres..."
+
+          until pg_isready -h postgres-account-service -U postgres -d account_service_dev; do
+            sleep 2
+          done
+
+          echo "Running migrations..."
+
+          PGPASSWORD=$PGPASSWORD psql \
+            -h postgres-account-service \
+            -U postgres \
+            -d account_service_dev \
+            -f /config/init.sql
+
+        volumeMounts:
+        - name: init
+          mountPath: /config
+
+      volumes:
+      - name: init
+        configMap:
+          name: postgres-account-init

@@ -1,4 +1,4 @@
-DB_HOST=postgres_balance
+DB_HOST=postgres-balance-service
 DB_USERNAME=postgres_balance
 DB_PASSWORD=password_postgres_balance
 BOOTSTRAP_SERVERS=kafka1:9092,kafka2:9092,kafka3:9092

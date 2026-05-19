@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-auth-deployment
+  name: postgres-auth
   namespace: microservices
 spec:
   replicas: 1
@@ -16,47 +16,42 @@ spec:
       containers:
       - name: postgres
         image: postgres:16-alpine
+
         ports:
         - containerPort: 5432
-          name: postgres
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+
         env:
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
               name: postgres-auth-secret
               key: POSTGRES_USER
+
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: postgres-auth-secret
               key: POSTGRES_PASSWORD
+
         - name: POSTGRES_DB
           valueFrom:
             secretKeyRef:
               name: postgres-auth-secret
               key: POSTGRES_DB
-        
+
         volumeMounts:
-        - name: postgres-storage
+        - name: data
           mountPath: /var/lib/postgresql/data
-        - name: postgres-config
-          mountPath: /etc/postgresql/postgresql.conf
-          subPath: postgresql.conf
-        # - name: postgres-config
-        #   mountPath: /docker-entrypoint-initdb.d/init.sql
-        #   subPath: init.sql
-      
+
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+
       volumes:
-      - name: postgres-storage
+      - name: data
         persistentVolumeClaim:
           claimName: postgres-auth-pvc
-      - name: postgres-config
-        configMap:
-          name: postgres-auth-config

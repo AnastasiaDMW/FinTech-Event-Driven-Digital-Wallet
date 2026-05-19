@@ -3,6 +3,8 @@ package com.example.gateway.fileter;
 import com.example.gateway.property.GatewayProperty;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Level;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -16,10 +18,12 @@ import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 
+import static org.apache.logging.log4j.Level.INFO;
 import static org.springframework.security.oauth2.jwt.JwtEncoderParameters.from;
 
 @Component
 @RequiredArgsConstructor
+@Log4j2
 public class JwtAuthenticationFilter implements WebFilter {
 
     private final JwtEncoder jwtEncoder;
@@ -32,7 +36,9 @@ public class JwtAuthenticationFilter implements WebFilter {
         if (path.equals("/auth/api/v1/login") ||
                 path.equals("/auth/api/v1/signup") ||
                 path.equals("/auth/api/v1/refresh") ||
-                path.equals("/auth/api/v1/logout")) {
+                path.equals("/auth/api/v1/logout") ||
+                path.startsWith("/actuator/")
+        ) {
 
             return chain.filter(exchange);
         }
@@ -53,6 +59,7 @@ public class JwtAuthenticationFilter implements WebFilter {
     }
 
     private String generateInternalToken(Jwt jwt) {
+        log.log(INFO, "Генерация токена");
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(gatewayProperty.getIssuer())

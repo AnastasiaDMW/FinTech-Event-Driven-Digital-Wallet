@@ -30,6 +30,6 @@ COPY --from=builder /app/notification-service .
 COPY ./.env ./.env
 COPY config/notificationservice.toml ./config/notificationservice.toml
 
-EXPOSE 8081
+EXPOSE 8083
 
 CMD ["./notification-service"]

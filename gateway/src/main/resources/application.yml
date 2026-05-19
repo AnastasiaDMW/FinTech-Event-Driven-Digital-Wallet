@@ -10,6 +10,10 @@ spring:
     name: gateway-service
   cloud:
     gateway:
+      metrics:
+        enabled: true
+      observation:
+        enabled: true
       default-filters:
         - StripPrefix=1
         - name: RequestRateLimiter
@@ -22,10 +26,13 @@ spring:
           uri: ${URI_AUTH}
           predicates:
             - Path=/auth/**
+
         - id: transactional
-          uri: lb://transactional-orchestrator
+          uri: ${URI_TRANSACTIONAL}
+          #lb://transactional-orchestrator
           predicates:
             - Path=/transactional/**
+
         - id: account
           uri: ${URI_ACCOUNT}
           predicates:
@@ -40,9 +47,34 @@ gateway:
   public-key: ${GATEWAY_PUBLIC_KEY}
   ttl: 300
 
-eureka:
-  client:
-    service-url:
-      defaultZone: ${URI_EUREKA}
-    register-with-eureka: true
-    fetch-registry: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: gateway-service
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  tracing:
+    sampling:
+      probability: 1.0   # 100% (для dev)
+  otlp:
+    tracing:
+      endpoint: ${URI_JAEGER}
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: ${URI_EUREKA}
+#    register-with-eureka: true
+#    fetch-registry: true
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level traceId=%X{traceId} spanId=%X{spanId} %logger - %msg%n"

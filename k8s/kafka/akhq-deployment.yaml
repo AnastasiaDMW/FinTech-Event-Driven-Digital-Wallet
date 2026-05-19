@@ -27,18 +27,18 @@ spec:
               connections:
                 prod-cluster:
                   properties:
-                    bootstrap.servers: "kafka-0.kafka-headless:9092,kafka-1.kafka-headless:9092,kafka-2.kafka-headless:9092"
+                    bootstrap.servers: "kafka-1:9092,kafka-2:9092,kafka-3:9092"
                   connect:
-                    - name: connect
+                    - name: kafka-connect
                       url: "http://kafka-connect:8083"
         
         resources:
           requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
             memory: "256Mi"
             cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "200m"
         
         livenessProbe:
           httpGet:

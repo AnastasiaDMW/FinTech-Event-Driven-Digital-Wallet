@@ -1,0 +1,41 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-autoscaler
+
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - services
+      - nodes
+      - persistentvolumeclaims
+      - persistentvolumes
+    verbs:
+      - watch
+      - list
+      - get
+
+  - apiGroups: [""]
+    resources:
+      - events
+      - endpoints
+    verbs:
+      - create
+      - patch
+
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - replicasets
+      - statefulsets
+    verbs:
+      - watch
+      - list
+      - get
+
+  - apiGroups: [""]
+    resources:
+      - nodes/status
+    verbs:
+      - patch

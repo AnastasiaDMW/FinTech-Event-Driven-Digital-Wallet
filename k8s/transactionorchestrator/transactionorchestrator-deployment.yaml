@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transactional-orchestrator
+  namespace: microservices
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transactional-orchestrator
+  template:
+    metadata:
+      labels:
+        app: transactional-orchestrator
+    spec:
+      containers:
+      - name: transactional-orchestrator
+        image: transactional-orchestrator:latest
+        imagePullPolicy: Never
+
+        ports:
+        - containerPort: 8080
+
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: transactionorchestrator-secret
+              key: DB_HOST
+
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: transactionorchestrator-secret
+              key: DB_USERNAME
+
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: transactionorchestrator-secret
+              key: DB_PASSWORD
+
+        - name: GATEWAY_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: transactionorchestrator-secret
+              key: GATEWAY_PUBLIC_KEY
+
+        - name: BOOTSTRAP_SERVERS
+          valueFrom:
+            secretKeyRef:
+              name: transactionorchestrator-secret
+              key: BOOTSTRAP_SERVERS
+
+        - name: ACCOUNT_URI
+          valueFrom:
+            secretKeyRef:
+              name: transactionorchestrator-secret
+              key: ACCOUNT_URI
+
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"

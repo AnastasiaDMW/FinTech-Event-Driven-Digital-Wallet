@@ -30,6 +30,6 @@ COPY --from=builder /app/account-service .
 COPY ./.env ./.env
 COPY config/accountservice.toml ./config/accountservice.toml
 
-EXPOSE 8081
+EXPOSE 8082
 
 CMD ["./account-service"]

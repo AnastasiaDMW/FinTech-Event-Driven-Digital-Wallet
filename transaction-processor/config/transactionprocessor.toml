@@ -1,4 +1,4 @@
-bind_addr=":8080"
+bind_addr=":8085"
 
 log_level="debug"
 log_format="text"
@@ -8,4 +8,4 @@ kafka_transaction_topic="transaction"
 kafka_failed_topic="failed"
 
 [store]
-database_url="host=postgres_transaction_processor port=5432 user=postgres password=1234 dbname=transaction_processor_dev sslmode=disable"
+database_url="host=postgres-transactionprocessor-service port=5432 user=postgres password=1234 dbname=transaction_processor_dev sslmode=disable"

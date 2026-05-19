@@ -1,4 +1,4 @@
-bind_addr=":8080"
+bind_addr=":8083"
 
 log_level="debug"
 log_format="text"
@@ -8,4 +8,4 @@ kafka_user_changed_topic="user.changed"
 kafka_send_notify_topic="notification"
 
 [store]
-database_url="host=postgres_notification_service port=5432 user=postgres password=1234 dbname=notification_service_dev sslmode=disable"
+database_url="host=postgres-notification-service port=5432 user=postgres password=1234 dbname=notification_service_dev sslmode=disable"

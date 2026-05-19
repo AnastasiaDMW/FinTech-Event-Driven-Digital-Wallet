@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	urlBalanceService = "http://balance:8080/api/v1/balance/"
+	urlBalanceService = "http://balance-service:8080/api/v1/balance/"
 	waitTimeout       = 4
 )
 
